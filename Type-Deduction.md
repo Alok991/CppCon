@@ -90,7 +90,7 @@ Treated like “normal” reference parameters, except:
    - && &  -> &
    - &  && -> &
    - &  &  -> &
-```C++
+```
 f(x); // x is lvalue ⇒ T ≡ int&, param's type ≡ int& (only case where a ref type is duduced for Template type T)
 f(cx); // cx is lvalue ⇒ T ≡ const int&, , param's type ≡ const int&
 f(rx); // rx is lvalue ⇒ T ≡ const int&, , param's type ≡ const int&
@@ -163,10 +163,10 @@ auto x2 = { 1,2,3 }; // x's type ≡ std::initializer_list<int>
 ```
 
 For C++ 17
-```
-auto x1 { 1, 2, 3 };   // error! direct init w/>1 element
+```C++
+auto x1   { 1, 2, 3 };   // error! direct init w/>1 element
 auto x2 = { 1, 2, 3 }; // std::initializer_list<int>
-auto x3 { 17 }; 	   // direct init with 1 element, x's type ≡ int
+auto x3   { 17 }; 	   // direct init with 1 element, x's type ≡ int
 auto x4 = { 17 };      // as in C++14, x's type ≡ std::initializer_list<int>
 ```
 
@@ -265,23 +265,23 @@ Deduced return type specifiers:
 *  auto: Use template (not auto!) type deduction rules.
 *  No type deduced for braced initializers.
 *  decltype(auto): Use decltype type deduction rules.
-```
+```C++
 auto foo()	// return int
 {
 	int x = 1;
 	return x;
 }
-descltype(auto) foo()	// return int&
+decltype(auto) foo()	// return int&
 {
 	int x = 1;
 	return x;
 }
-descltype(auto) foo()	// return int because of auto in declaration of x
+decltype(auto) foo()	// return int because of auto in declaration of x
 {
 	auto x = 1;
 	return x;
 }
-descltype(auto) foo()	// return int&   because return contains an expression
+decltype(auto) foo()	// return int&   because return contains an expression
 {
 	int x = 1;
 	return (x);
