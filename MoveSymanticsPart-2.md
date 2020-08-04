@@ -54,7 +54,7 @@ namespace std
 } // namespace std
 ```
 
-In above code we want to forwatd ??? type params to unique_ptr constructor, but this problem is impossible without forwarding ref.
+In above code we want to forward ??? type params to unique_ptr constructor, but this problem is impossible without forwarding ref.
 Now we will see example of how we can tackle this without forwarding ref and what are their drawback.
 
 ### 1. Pass by copy
@@ -118,7 +118,7 @@ std::make_unique<Example>( i ); // Always adds const
 Hence These wont work perfectly either
 
 ### 4. Pass by forwarding ref
-Lets try our branch new ref and see if that works
+Lets try our brand new ref and see if that works
 
 ```C++
 namespace std 
@@ -185,7 +185,8 @@ Lets revisit out std::move once again
 template< typename T >
 std::remove_reference_t<T>&& move( T&& t ) noexcept
 {
-return static_cast<std::remove_reference_t<T>&&>( t ); }
+    return static_cast<std::remove_reference_t<T>&&>( t ); 
+}
 ```
 
 So now the corrected defenition of std::move, it takes a forwarding reference, this is why it can take lvalue or rvalue anything , and outputs a rvalue
