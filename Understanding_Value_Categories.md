@@ -147,4 +147,30 @@ from a programmers point of view both are constants and can be used in exact sam
 |non-modifiable l-value| yes | no|
 |non-class r-value|no|no|
 
-For class -rvalue we will study a bit more :p
+For class rvalue we will study a bit more :p
+
+## Reference Types
+The concepts of Lvalues and Rvalues help us exaplain concepts of reference in C++
+
+References under the hood are just like constant pointer.
+but by using references we can make non-builtin types behave like builtin types.(we will se how ..)
+
+```C
+enum month { jan, feb, mar, ... dec, month_end};
+typedef enum month month;
+
+for(month m = jan ; m< month_end ; ++m)
+{
+    //...
+}
+```
+Above code compiles and execute in `C` but not in `C++`, reason being C++ enum are treated as distinct types
+
+So we will need to overload `++` operator for month type
+
+```C++
+month operator++(month m)
+{
+    return static_cast<month>(m+1);
+}
+```
