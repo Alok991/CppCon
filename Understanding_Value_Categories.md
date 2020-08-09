@@ -22,7 +22,7 @@ n = 1;  // an assignment expression
 ```
 
 In asm this might look like
-```
+```AS
 one :           ;a label for following location in datastore
     .word 1     ;allocate storage for holding value 1
 
