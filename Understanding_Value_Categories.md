@@ -255,7 +255,7 @@ void swap(T a, T b)
 }
 ```
 Here we know there is no need to preserve a and we can move , and its safe to move from an Lvalue if its going to expire
-So if its going to expiry lets make it xValue, but compiler can deduce it, we need to inform it by using std::move
+So if its going to expiry lets make it xValue, but compiler cant deduce it, we need to inform it by using std::move
 
 
 ### Graph for various values
