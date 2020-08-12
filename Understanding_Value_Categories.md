@@ -171,6 +171,103 @@ So we will need to overload `++` operator for month type
 ```C++
 month operator++(month m)
 {
-    return static_cast<month>(m+1);
+    // ++ operator increments the variable and returns too
+    return (m = static_cast<month>(m+1)); 
 }
 ```
+Here we did not increments m but copied it and incremented that copy. It wont work
+Also this allows `++jan` which should not be allowed, but ++42 must work and it wont work in here.
+We can try same function with pass by poiner but it wont work because ++&m is wrong and does not behave like builtin types anymore.
+Also We cant pass pointer types to operator overload.
+
+So Standard introduced l-value ref.
+```C++
+month& operator++(month &m)
+{
+    // ++ operator increments the variable and returns too
+    return (m = static_cast<month>(m+1)); 
+}
+```
+
+This works and feel like builtin types, but it still does not work for 42++;
+
+What we can do is `ref to const T`. ref to const T binds to a non-lvalue . The compiler constructs a __temp__ object and bind it to that. So that ref has something to bind to.
+```C++
+double const& m = 3;    // allowed by making __temp__ object and bind to it;, when m is destroyed the compiler destroys m too
+```
+
+##### So why does ref to const behaves this way ?
+So that pass by ref behaves completely like pass by value, i.e. foo(x) and foo(1) both works, 
+It wont change arguments just like pass by copy and it does not modify
+
+## Two types of rValue
+So rvlues does not occupy storage unless they bind to a __temp__ obj
+
+We can differentiate between them as 
+
+**prvalue** -> pure r-Value , which does not occupy space
+**xvalue**  -> expiring value, which does occupy space
+
+The __temp__ object is created from prvalue to xvalue via Temporary materialization conversion
+```C++
+int f =9;
+f+10;   // lvalue + rvalue => return rvalue
+
+int operator+(int const&, int const&);
+```
+
+### C++11 introduced rvalue references
+So ref till now becomes lVlaue ref
+```C++
+int&& i = 10;
+```
+
+RVlaue ref only binds to rvalue
+Binding an rvalue Reference to an rValue triggers Temprorary materializaion conversion.
+Modern C++ implements move operators in terms of rValue ref to avoid copy
+
+```C++
+string s1,s2,s3;
+
+s1=s2;        //string::operator=(string const&);
+s1=s2+s3;     //string::operator=(string&&)
+```
+
+When we look inside the `string::operator=(string&&)`
+```C++
+string& string::operator+(string && s)
+{
+  string temp(s);   // calls string::operator=(string const &);  s is now lvalue
+}
+```
+
+So above `s` is being treated as l-vlaue reference to const, Hence s in the function argument s has to become xvalue, because it needs to have space
+
+### Lvalue as Xvalue
+
+Sometimes we want to move from lvalue, like swap function
+```C++
+void swap(T a, T b)
+{
+    T t{a};
+    a=b;
+    b=t;
+}
+```
+Here we know there is no need to preserve a and we can move , and its safe to move from an Lvalue if its going to expire
+So if its going to expiry lets make it xValue, but compiler can deduce it, we need to inform it by using std::move
+
+
+### Graph for various values
+```
+                      expression
+                          /\
+                         /  \
+                        /    \
+                    gLvalue  rvalue
+                    / \       / \
+                   /   \     /   \
+                  /     \   /     \
+                lvalue  xvalue   prValue
+```
+`gValue -> generalised Lvalue`
